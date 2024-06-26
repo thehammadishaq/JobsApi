@@ -23,7 +23,7 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: [true, "Please Provide Password"],
         minlength: [6, "Password cannot be less than 6 characters"],
-        select: false,
+        // select: false,
     },
 }
 )
@@ -33,8 +33,23 @@ UserSchema.pre('save', async function () {
     this.password = await bcrypt.hash(this.password, salt)
 })
 
+
 //JWT Token
 UserSchema.methods.createJWT = function () {
     return jwt.sign({ id: this._id, name: this.name }, process.env.JWT_TOKEN, { expiresIn: process.env.JWT_LIFETIME })
 }
+
+
+
+UserSchema.methods.comparePassword = async function (canditatePassword) {
+    const isMatch = await bcrypt.compare(String(canditatePassword), this.password)
+    return isMatch
+}
+
+
+
+
+
+
 module.exports = mongoose.model('User', UserSchema)
+

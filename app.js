@@ -3,6 +3,12 @@ require('express-async-errors');
 const express = require('express');
 const app = express();
 
+
+
+
+// authenticateUser
+const { authenticateUser } = require('./middleware/authentication');
+
 // connect to DB
 const connectDB = require('./db/connect');
 
@@ -20,7 +26,7 @@ app.use(express.json());
 // routes
 
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/jobs', jobsRouter);
+app.use('/api/v1/jobs', authenticateUser, jobsRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
@@ -39,3 +45,29 @@ const start = async () => {
 };
 
 start();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// For deleting Documents
+// const codes = require('http-status-codes');
+// const User = require('./models/User');
+// app.delete('/api/v1/delete', async (req, res) => {
+//   const user = await User.deleteMany({})
+//   console.log(user);
+//   res.status(codes.StatusCodes.OK).json(user)
+// })
